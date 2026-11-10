@@ -12,7 +12,29 @@ void processInput(GLFWwindow *window);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-bool g_mouseWasPressed = false;
+//bool g_mouseWasPressed = false;
+
+
+const char* VertexShaderSource = R"S(
+#version 330 core
+
+layout (location = 0) in vec3 aPos;
+
+void main() {
+    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+} 
+
+)S";
+
+const char* FragmentShaderSource = R"S(
+#version 330 core
+
+out vec4 FragColor;
+
+void main(){
+    FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+}
+)S";
 
 int main() {
     glfwInit();
@@ -29,91 +51,104 @@ int main() {
         return -1;
     }
 
+
+
+    unsigned vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &VertexShaderSource, nullptr);
+    glCompileShader(vertexShader); 
+
+    int success = 0;
+
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+    if(!success){
+        char infoLog[512];
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+    unsigned fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &FragmentShaderSource, nullptr);
+    glCompileShader(fragmentShader);
+
+    success = 0;
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if(!success){
+        
+        char infoLog[512];
+        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+
+
+    unsigned shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+
+    if(!success){
+        char infoLog[512];
+        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+
+
+
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,//levo teme
+         0.5f, -0.5f, 0.0f,// desno teme 
+         0.0f,  0.5f, 0.0f,//gornje teme
+    };
+
+
+
+
+    unsigned int VBO; //Vertex Buffer Object
+    unsigned int VAO; //Vertex Array Object 
+
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(1,&VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
-        glfwSwapBuffers(window);
         glfwPollEvents();
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glfwSwapBuffers(window);
+        
     }
     glfwTerminate();
     return 0;
-}
-void ChangeWindow(GLFWwindow *window, int xOff, int yOff) {
-    int width;
-    int height;
-    glfwGetWindowSize(window, &width, &height);
-    glfwSetWindowSize(window, width + xOff, height + yOff);
 }
 
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
-
-    bool isCtrlPressed = (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
-                          glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS);
-    bool isShiftPressed = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
-                           glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
-
-
-    bool isLeftMouseButtonPressed = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT));
-    bool isLeftArrowPressed = (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS);
-    bool isRightArrowPressed = (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS);
-    bool isUpArrowPressed = (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
-    bool isDownArrowPressed = (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS);
-
-    if (isCtrlPressed && isLeftArrowPressed) {
-        ChangeWindow(window, -1, 0);
-    } else if (isCtrlPressed && isRightArrowPressed) {
-        ChangeWindow(window, 1, 0);
-    } else if (isCtrlPressed && isDownArrowPressed) {
-        ChangeWindow(window, 0, 1);
-    } else if (isCtrlPressed && isUpArrowPressed) {
-        ChangeWindow(window, 0, -1);
-    }
-
-    if (isLeftMouseButtonPressed) {
-        if (isShiftPressed) {
-            double xpos;
-            double ypos;
-            glfwGetCursorPos(window, &xpos, &ypos);
-            if (!g_mouseWasPressed) {
-                int width;
-                int height;
-                glfwGetWindowSize(window, &width, &height);
-                glClearColor(xpos / width, (height - ypos) / height, 0, 1.0f);
-                glClear(GL_COLOR_BUFFER_BIT);
-            }
-        } else if (!g_mouseWasPressed) {
-            float red;
-            float green;
-            float blue;
-            red = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-            green = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-            blue = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-            glClearColor(red, green, blue, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
-        }
-        g_mouseWasPressed = true;
-    } else {
-        g_mouseWasPressed = false;
-    }
-
-    bool isSpacePressed = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
-
-    if (isSpacePressed && !g_mouseWasPressed) { // Možeš preimenovati promenljivu u g_buttonWasPressed
-        float red = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        float green = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        float blue = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        glClearColor(red, green, blue, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        g_mouseWasPressed = true; 
-    }
-   
-
-        
 }
-
-
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
