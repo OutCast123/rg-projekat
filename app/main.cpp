@@ -104,7 +104,11 @@ int main() {
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,//levo teme
          0.5f, -0.5f, 0.0f,// desno teme 
-         0.0f,  0.5f, 0.0f,//gornje teme
+        -0.5f,  0.5f, 0.0f,//gornje teme
+
+        -0.5f, 0.5f, 0.0f,//levo teme
+         0.5f, -0.5f, 0.0f,// desno teme 
+         0.5f,  0.5f, 0.0f,//gornje teme
     };
 
 
@@ -135,7 +139,7 @@ int main() {
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glfwSwapBuffers(window);
         
