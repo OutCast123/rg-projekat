@@ -30,9 +30,9 @@ const char* FragmentShaderSource = R"S(
 #version 330 core
 
 out vec4 FragColor;
-
+uniform vec4 ourColor;
 void main(){
-    FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    FragColor = ourColor;
 }
 )S";
 
@@ -102,20 +102,46 @@ int main() {
 
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,//levo teme
-         0.5f, -0.5f, 0.0f,// desno teme 
-        -0.5f,  0.5f, 0.0f,//gornje teme
+        
+        -1.0f , -1.0f , 0.0f ,  //dole levo 0
+         0.0f , -1.0f , 0.0f , // dole sredina 1
+         1.0f , -1.0f , 0.0f , // dole desno 2
 
-        -0.5f, 0.5f, 0.0f,//levo teme
-         0.5f, -0.5f, 0.0f,// desno teme 
-         0.5f,  0.5f, 0.0f,//gornje teme
+        -1.0f , 0.0f , 0.0f , //sredina levo 3
+         0.0f , 0.0f , 0.0f , //sredina 4
+         1.0f , 0.0f , 0.0f , //sredina desno 5
+
+        -1.0f , 1.0f , 0.0f ,  //gore levo 6
+         0.0f , 1.0f , 0.0f , // gore sredina 7
+         1.0f , 1.0f , 0.0f , // gore desno 8 
     };
 
+
+    unsigned indices[] = {
+        //prvi
+        4 , 5 , 8,
+        4 , 7 , 8,
+
+        //drugi
+        3 , 4 , 7,
+        3 , 6, 7,
+
+        //treci
+        0 , 1 , 4,
+        0 , 3 , 4,
+
+        //cetrvti
+        1 , 2 , 5,
+        1 , 4 , 5
+    };
 
 
 
     unsigned int VBO; //Vertex Buffer Object
     unsigned int VAO; //Vertex Array Object 
+    unsigned int EBO; //Element Buffer Object
+
+    
 
 
     glGenVertexArrays(1, &VAO);
@@ -125,25 +151,50 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+
+    
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
         glfwPollEvents();
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        //glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        //glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+
+        glUniform4f(vertexColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glUniform4f(vertexColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(6 * sizeof(unsigned int)));
+
+        glUniform4f(vertexColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(12 * sizeof(unsigned int)));
+
+        glUniform4f(vertexColorLocation, 1.0f, 1.0f, 0.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(18 * sizeof(unsigned int)));    
 
         glfwSwapBuffers(window);
         
     }
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteProgram(shaderProgram);
+
     glfwTerminate();
     return 0;
 }
