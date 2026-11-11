@@ -8,11 +8,10 @@
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
-
+void crtaj();
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-//bool g_mouseWasPressed = false;
 
 
 const char* VertexShaderSource = R"S(
@@ -35,6 +34,8 @@ void main(){
     FragColor = ourColor;
 }
 )S";
+unsigned shaderProgram;
+int curr=0;
 
 int main() {
     glfwInit();
@@ -82,7 +83,7 @@ int main() {
 
 
 
-    unsigned shaderProgram = glCreateProgram();
+    shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
@@ -102,38 +103,100 @@ int main() {
 
 
     float vertices[] = {
-        
-        -1.0f , -1.0f , 0.0f ,  //dole levo 0
-         0.0f , -1.0f , 0.0f , // dole sredina 1
-         1.0f , -1.0f , 0.0f , // dole desno 2
+    // trougao
+    -0.5f,  -0.5f,  0.0f, // 0 
+     0.5f,  -0.5f,  0.0f, // 1 
+     0.0f,   0.5f,  0.0f, // 2 
 
-        -1.0f , 0.0f , 0.0f , //sredina levo 3
-         0.0f , 0.0f , 0.0f , //sredina 4
-         1.0f , 0.0f , 0.0f , //sredina desno 5
+    // cetvorougao
+    -0.5f,   0.5f,  0.0f, // 3 
+     0.5f,   0.5f,  0.0f, // 4 
 
-        -1.0f , 1.0f , 0.0f ,  //gore levo 6
-         0.0f , 1.0f , 0.0f , // gore sredina 7
-         1.0f , 1.0f , 0.0f , // gore desno 8 
-    };
+    // petougao
+    -0.48f,  0.15f, 0.0f, // 5 
+    -0.29f, -0.4f,  0.0f, // 6 
+     0.29f, -0.4f,  0.0f, // 7 
+     0.48f,  0.15f, 0.0f, // 8 
+
+    // sestougao
+    -0.43f,  0.25f, 0.0f, // 9 
+    -0.43f, -0.25f, 0.0f, // 10 
+     0.0f,  -0.5f,  0.0f, // 11 
+     0.43f, -0.25f, 0.0f, // 12 
+     0.43f,  0.25f, 0.0f, // 13 
+
+    // sedmougao
+    -0.39f,  0.31f, 0.0f, // 14 
+    -0.49f, -0.11f, 0.0f, // 15 
+    -0.22f, -0.45f, 0.0f, // 16 
+     0.22f, -0.45f, 0.0f, // 17 
+     0.49f, -0.11f, 0.0f, // 18 
+     0.39f,  0.31f, 0.0f,  // 19 
+
+     // osmougao
+    -0.35f,  0.35f, 0.0f, // 20 
+    -0.5f,   0.0f,  0.0f, // 21 
+    -0.35f, -0.35f, 0.0f, // 22 
+     0.35f, -0.35f, 0.0f, // 23 
+     0.5f,   0.0f,  0.0f, // 24 
+     0.35f,  0.35f, 0.0f, // 25 
+
+    // devetougao
+    -0.32f,  0.38f, 0.0f, // 26 
+    -0.49f,  0.09f, 0.0f, // 27 
+    -0.17f, -0.47f, 0.0f, // 28 
+     0.17f, -0.47f, 0.0f, // 29 
+     0.49f,  0.09f, 0.0f, // 30 
+     0.32f,  0.38f, 0.0f  // 31 
+};
 
 
     unsigned indices[] = {
-        //prvi
-        4 , 5 , 8,
-        4 , 7 , 8,
+    // trougao
+    0, 1, 2,
 
-        //drugi
-        3 , 4 , 7,
-        3 , 6, 7,
+    // cetvorougao
+    0, 1, 3,
+    1, 3, 4,
 
-        //treci
-        0 , 1 , 4,
-        0 , 3 , 4,
+    // petougao
+    2, 5, 6,
+    2, 6, 7,
+    2, 7, 8,
 
-        //cetrvti
-        1 , 2 , 5,
-        1 , 4 , 5
-    };
+    // sestougao
+    2,  9, 10,
+    2, 10, 11,
+    2, 11, 12,
+    2, 12, 13,
+
+    // sedmougao
+    2, 14, 15,
+    2, 15, 16,
+    2, 16, 17,
+    2, 17, 18,
+    2, 18, 19,
+
+    // osmougao
+    2, 20, 21,
+    2, 21, 22,
+    2, 22, 11,
+    2, 11, 23,
+    2, 23, 24,
+    2, 24, 25,
+
+
+
+
+    // devetougao
+    2, 26, 27,
+    2, 27, 10, 
+    2, 10, 28, 
+    2, 28, 29,
+    2, 29, 12, 
+    2, 12, 30, 
+    2, 30, 31
+};
 
 
 
@@ -166,27 +229,12 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
         glfwPollEvents();
-        //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        //glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-
-        //glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
-        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-
-        glUniform4f(vertexColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        glUniform4f(vertexColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(6 * sizeof(unsigned int)));
-
-        glUniform4f(vertexColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(12 * sizeof(unsigned int)));
-
-        glUniform4f(vertexColorLocation, 1.0f, 1.0f, 0.0f, 1.0f);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(18 * sizeof(unsigned int)));    
-
+        crtaj();
         glfwSwapBuffers(window);
         
     }
@@ -203,7 +251,64 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+        
+        if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
+            curr=1;
+        }
+        else if(glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
+           curr=2;
+        }
+        else if(glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {
+            curr=3;
+        }
+        else if(glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS) {
+            curr=4;
+        }
+        else if(glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS) {
+            curr=5;
+        }
+        else if(glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) {
+            curr=6;
+        }
+        else if(glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS) {
+            curr=7;
+        }
+    }
 }
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+void crtaj(){
+    int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+    if(curr == 1){
+        glUniform4f(vertexColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    }
+    else if(curr == 2){
+        glUniform4f(vertexColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(3 * sizeof(unsigned int)));
+    }
+    else if(curr == 3){
+        glUniform4f(vertexColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, (void*)(9 * sizeof(unsigned int)));
+    }
+    else if(curr == 4){
+        glUniform4f(vertexColorLocation, 1.0f, 1.0f, 0.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void*)(18 * sizeof(unsigned int)));
+    }
+    else if(curr == 5){
+        glUniform4f(vertexColorLocation, 1.0f, 0.0f, 1.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 15, GL_UNSIGNED_INT, (void*)(30 * sizeof(unsigned int)));
+    }
+    else if(curr == 6){
+        glUniform4f(vertexColorLocation, 0.0f, 1.0f, 1.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, (void*)(45 * sizeof(unsigned int)));
+    }
+    else if(curr == 7){
+        glUniform4f(vertexColorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 21, GL_UNSIGNED_INT, (void*)(63 * sizeof(unsigned int)));
+    }
 }

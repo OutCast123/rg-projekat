@@ -6,9 +6,9 @@ Projekat studenta Strahinje Vasiljevic broj indeksa mi121/2024 za predmet Račun
 
 ## Implementacije
 
-*Kvadranti razlicitih boja korsteci EBO i Uniform vec za dostavu boja
+* Ctrl+N crta N-to ugao gde je N broj od 3-9
 
-*Esc gasi aplikaciju
+* Esc gasi aplikaciju
 
 
 
