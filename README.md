@@ -6,7 +6,7 @@ Projekat studenta Strahinje Vasiljevic broj indeksa mi121/2024 za predmet Račun
 
 ## Implementacije
 
-* Ctrl+N crta N-to ugao gde je N broj od 3-9
+* Crna pozadina beli kvadrat
 
 * Esc gasi aplikaciju
 
