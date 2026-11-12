@@ -95,6 +95,7 @@ endif()
 # Absolute path to resources (shaders, textures, models) for use in code
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         RESOURCES_DIR="${CMAKE_SOURCE_DIR}/resources"
+        SHADER_DIR="${CMAKE_SOURCE_DIR}/app/shaders/"
         SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE
         SPDLOG_DEBUG_ON
         SPDLOG_TRACE_ON)
@@ -129,4 +130,3 @@ endif()
 # a per-configuration subfolder (Debug/, Release/).
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "$<1:${CMAKE_SOURCE_DIR}>")
-
