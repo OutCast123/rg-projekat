@@ -6,6 +6,8 @@ Projekat studenta Strahinje Vasiljevic broj indeksa mi121/2024 za predmet Račun
 
 ## Implementacije
 
+* Shaderi u odvojenim fajlovima sa klasom za laksi rad
+
 * Crna pozadina beli kvadrat
 
 * Esc gasi aplikaciju
