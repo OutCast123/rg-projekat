@@ -35,6 +35,10 @@ void Shader::setVec4(const std::string &name, float x, float y, float z, float w
     glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
 }
 
+void Shader::setVec4(const std::string &name, const glm::vec3 &v, float w) const {
+    glUniform4f(glGetUniformLocation(ID, name.c_str()), v.x, v.y, v.z, w);
+}
+
 std::string Shader::readFile(const std::string &path, bool &ok) {
     std::ifstream file(path);
     if (!file.is_open()) {

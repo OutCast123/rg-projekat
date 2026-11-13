@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 #include <string>
 
 class Shader {
@@ -26,6 +27,7 @@ public:
     void setFloat(const std::string &name, float value) const;
     void setVec2(const std::string &name, float x, float y) const;
     void setVec4(const std::string &name, float x, float y, float z, float w) const;
+    void setVec4(const std::string &name, const glm::vec3 &v, float w) const ;
 
     unsigned int ID = 0;
 };

@@ -10,7 +10,7 @@ Projekat studenta Strahinje Vasiljevic broj indeksa mi121/2024 za predmet Račun
 
 * Crna pozadina beli kvadrat
 
-* Pritiskom odgovarajuce strelice na tastaturi kvadratic se krece u tom smeru 
+* Shift + K + (r | g | b) menjau boju K-tog kvadranta na odgovarajucu boju
 
 * Esc gasi aplikaciju
 
