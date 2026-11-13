@@ -10,6 +10,8 @@ Projekat studenta Strahinje Vasiljevic broj indeksa mi121/2024 za predmet Račun
 
 * Crna pozadina beli kvadrat
 
+* Pritiskom odgovarajuce strelice na tastaturi kvadratic se krece u tom smeru 
+
 * Esc gasi aplikaciju
 
 

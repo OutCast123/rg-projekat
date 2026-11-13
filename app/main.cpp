@@ -14,6 +14,9 @@ void crtaj(const Shader &shader);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+int g_XoffSet=0;
+int g_YoffSet=0;
+
 int main() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -46,10 +49,10 @@ int main() {
 
         float vertices[] = {
                 // kvadrat
-                -0.5f, -0.5f, 0.0f, // 0
-                0.5f, -0.5f, 0.0f,  // 1
-                -0.5f, 0.5f, 0.0f,  // 2
-                0.5f, 0.5f, 0.0f,   // 3
+                -0.25f, -0.25f, 0.0f, // 0
+                0.25f, -0.25f, 0.0f,  // 1
+                -0.25f, 0.25f, 0.0f,  // 2
+                0.25f, 0.25f, 0.0f,   // 3
         };
 
         unsigned indices[] = {
@@ -105,6 +108,22 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
+
+    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        g_XoffSet--;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        g_XoffSet++;
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        g_YoffSet++;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        g_YoffSet--;
+    }
+
+
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
@@ -113,5 +132,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 
 void crtaj(const Shader &shader) {
     shader.setVec4("ourColor", 1.0f, 1.0f, 1.0f, 1.0f);
+    shader.setVec2("offSet", g_XoffSet * 0.01f, g_YoffSet * 0.01f);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
