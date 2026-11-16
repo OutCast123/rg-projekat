@@ -13,3 +13,11 @@ glm::vec3 Kvadrant::getColor() const {
 glm::vec2 Kvadrant::getOffset() const {
     return offset;
 }
+
+void Kvadrant::setTextureFactor(float f) {
+    textureFactor = f;
+}
+
+float Kvadrant::getTextureFactor() const {
+    return textureFactor;
+}

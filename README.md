@@ -12,6 +12,8 @@ Projekat studenta Strahinje Vasiljevic broj indeksa mi121/2024 za predmet Račun
 
 * Shift + K + (r | g | b) menjau boju K-tog kvadranta na odgovarajucu boju
 
+* Shift + K + t ukljucuje (iskljucuje) mesanje teksture K-tog kvadranta sa bojom tog kvadranta 
+
 * Esc gasi aplikaciju
 
 
